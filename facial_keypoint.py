@@ -40,17 +40,15 @@ detector = dlib.get_frontal_face_detector()
 predictor = dlib.shape_predictor(args['shape_predictor'])
 
 
-# create face aligner
-fa = FaceAligner(predictor, desiredFaceWidth=224)
-
 while True:
     _, image = cap.read()
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
-    rects = detector(gray, 1)
+    rects = detector(gray, 2)
 
     for (i, rect) in enumerate(rects):
         shape = predictor(gray, rect)
+        print('rect :', rect)
 
         shape = face_utils.shape_to_np(shape)
 
@@ -59,11 +57,18 @@ while True:
         #     0.7, (0, 0, 255), 2)
 
         # body_part_shape = shape[FACIAL_LANDMARKS_IDXS[body_part][0]: FACIAL_LANDMARKS_IDXS[body_part][1]]
+        count = 0
         for part_body in interested_body_part:
             part_body_shape = shape[FACIAL_LANDMARKS_IDXS[part_body]
                                     [0]: FACIAL_LANDMARKS_IDXS[part_body][1]]
+            # print('Part Name :', part_body)
+            # print('#########')
             for (x, y) in part_body_shape:
+                # print('Position ' + str(count) +
+                    #   ' : ' + str(x) + ', ' + str(y))
+                count += 1
                 cv2.circle(clone, (x, y), 1, (0, 0, 255), -1)
+            # print('#########')
 
         # (x, y, w, h) = cv2.boundingRect(np.array(body_part_shape))
         # roi = clone[y: y+h, x: x+w]
